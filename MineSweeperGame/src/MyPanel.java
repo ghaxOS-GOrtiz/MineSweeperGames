@@ -1,7 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.lang.reflect.Array;
+//import java.lang.reflect.Array;
+//import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -13,14 +14,15 @@ public class MyPanel extends JPanel {
 	private static final int INNER_CELL_SIZE = 29;
 	private static final int TOTAL_COLUMNS = 10;
 	private static final int TOTAL_ROWS = 10;
-	public int totalMines = 10 ;
+	public static int totalMines = 10 ;
 	public int x = -1;
 	public int y = -1;
 	public int mouseDownGridX = 0;
 	public int mouseDownGridY = 0;
 	public Color[][] colorArray = new Color[TOTAL_COLUMNS][TOTAL_ROWS];
-	public int[][] squaresContainingMines = new int[0][0];
+//	public int[][] squaresContainingMines = new int[0][0];
 
+//	public ArrayList hasMines = new ArrayList(10);
 	
 	public MyPanel() {   //This is the constructor... this code runs first to initialize
 		if (INNER_CELL_SIZE + (new Random()).nextInt(1) < 1) {	//Use of "random" to prevent unwanted Eclipse warning
@@ -85,27 +87,30 @@ public class MyPanel extends JPanel {
 		}
 	}
 	// will generate and place mines randomly
-	
-	public void mineGenerator() {
-		Random randomNumber = new Random();
-		for (int i =0; i < totalMines;i++){
-			int rowValue = randomNumber.nextInt(8)+1;
-			int columnValue = randomNumber.nextInt(8)+1;
-			
-		while (containsMine(columnValue,rowValue)) {
-			 
-			 rowValue = randomNumber.nextInt(8)+1;
-			 columnValue = randomNumber.nextInt(8)+1;
-		}
-			System.out.println("X: " + (columnValue) + "," + "Y: " + (rowValue) );
-			
-			squaresContainingMines[columnValue][rowValue] = 1;
-		}
-	}
+	/*
+	 * Checked code, and did not worked. 
+	 */
+//	public void mineGenerator() {
+//		Random randomNumber = new Random();
+//		for (int i =0; i < totalMines;i++){
+//			int rowValue = randomNumber.nextInt(8)+1;
+//			int columnValue = randomNumber.nextInt(8)+1;
+//			hasMines.add(rowValue, columnValue);
+//			
+////		while (containsMine(columnValue,rowValue)) {
+////			 
+////			 rowValue = randomNumber.nextInt(8)+1;
+////			 columnValue = randomNumber.nextInt(8)+1;
+////		}
+//			System.out.println("X: " + (columnValue) + "," + "Y: " + (rowValue) );
+//			
+//			squaresContainingMines[columnValue][rowValue] = 1;
+//		}
+//	}
 		
-		public boolean containsMine(int x,int y) {
-			return true;
-		}
+//		public boolean containsMine(int x,int y) {
+//			return true;
+//		}
 	
 	public int getGridX(int x, int y) {
 		Insets myInsets = getInsets();
