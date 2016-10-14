@@ -12,6 +12,10 @@ public class MyMouseAdapter extends MouseAdapter {
 	private Random minePosition = new Random();
 	private int clickedRow;
 	private int clickedColumn;
+	private int row;
+	private int column;
+	private boolean isFlagged;
+	private ArrayList<Integer> hasFlags = new ArrayList<Integer>(20);
 	public ArrayList<Integer> hasMines = new ArrayList<Integer>(20);
 	public Color newColor = null;
 	public boolean hasAMine;
@@ -29,25 +33,29 @@ public class MyMouseAdapter extends MouseAdapter {
 				}
 			}
 
-			System.out.println("row = " + rowValue + " column = " + columnValue + " i = " + i);
+			System.out.println("row = " + rowValue + " column = " + columnValue );
 		}
-		System.out.println(hasMines);
+
 	}
 
 	public void isAMine() {   // Detects the mines
 		for (int i = 0; i < hasMines.size(); i++) {
-			int row = hasMines.get(i);
+			row = hasMines.get(i);
 			i++;
-			int column = hasMines.get(i);
-			if ((clickedRow == row) && (clickedColumn == column)) {
-				newColor = Color.BLACK;
-				System.out.println("GameOver"); // Must be replaced with end event.
-				//				newColor = Color.GRAY;
-				//				System.out.println("Smething happened");
+			column = hasMines.get(i);
+			if (isFlagged == false) {
+				if ((clickedRow == row) && (clickedColumn == column)) {
+					newColor = Color.BLACK	;
+					System.out.println("GameOver");
+					hasAMine = true;
+					//				newColor = Color.GRAY;
+					//				System.out.println("Smething happened");
+				}
+				else {
+					hasAMine = false;
+				}
 			}
-			else {
-				hasAMine = false;
-			}
+			
 			//			else if ((clickedRow == row) && (clickedColumn == column)) {  // if the clicked square equals a mine position, end game
 
 			//			Need to make code to mark as empty
@@ -60,15 +68,30 @@ public class MyMouseAdapter extends MouseAdapter {
 
 		}
 	}
-	public void mineFlagger() {  // Defective
-		for (int i = 0; i < hasMines.size(); i++) {
-			int row = hasMines.get(i);
-			i++;
-			int column = hasMines.get(i);
-			if ((clickedRow == row) && (clickedColumn == column)) {
-				newColor = Color.RED;
+	public void mineFlagger() {  //Defective
+		for (int i = 0; i <10; i++) {
+			row = i + 1;
+			for (int j = 0; j < 10; j++) {
+				column = j + 1;
+				
+				if ((clickedRow == row) && (clickedColumn == column) && (isFlagged == false)) {
+					hasFlags.add(row);
+					hasFlags.add(column);
+										newColor = Color.RED;
+//					isFlagged = true;
+//					break;
+				}
+				else if ((clickedRow == row) && (clickedColumn == column) && (isFlagged == true)){
+					hasFlags.remove(i);
+					hasFlags.remove(j);
+					newColor = Color.WHITE;
+//					isFlagged = false;
+//					break;
+				}
 			}
+
 		}
+		System.out.println(isFlagged);
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -235,7 +258,7 @@ public class MyMouseAdapter extends MouseAdapter {
 			myPanel.repaint();
 			break;
 			//Do nothing
-		
+
 		}
 	}
 }
