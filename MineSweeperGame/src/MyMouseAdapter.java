@@ -15,25 +15,32 @@ public class MyMouseAdapter extends MouseAdapter {
 	private int row;
 	private int column;
 	private boolean isFlagged;
-	private ArrayList<Integer> hasFlags = new ArrayList<Integer>(20);
+	private ArrayList<Integer> flagLocations = new ArrayList<Integer>(22);
+	private int flagCounter = 0;
+
+	public  ArrayList<Boolean> usedFlags = new ArrayList<Boolean>();
 	public ArrayList<Integer> hasMines = new ArrayList<Integer>(20);
 	public Color newColor = null;
 	public boolean hasAMine;
 
+
 	public void mineGenerator() {  // Generates the mines
+		flagLocations.add(0);
+		flagLocations.add(0);
 		for (int i =0; i < MyPanel.totalMines;i++){
 			int rowValue = minePosition.nextInt(8)+1;
 			int columnValue = minePosition.nextInt(8)+1;		
 			hasMines.add(rowValue);
 			hasMines.add(columnValue);
+			usedFlags.add(false);
 			for (int j = 0; j < hasMines.size(); j++) {
 				if (hasMines.get(j) == 0) {
 					hasMines.remove(j);
 					hasMines.add(minePosition.nextInt(8) + 1);
 				}
 			}
-
 			System.out.println("row = " + rowValue + " column = " + columnValue );
+			System.out.println(usedFlags);
 		}
 
 	}
@@ -43,55 +50,67 @@ public class MyMouseAdapter extends MouseAdapter {
 			row = hasMines.get(i);
 			i++;
 			column = hasMines.get(i);
-			if (isFlagged == false) {
-				if ((clickedRow == row) && (clickedColumn == column)) {
-					newColor = Color.BLACK	;
-					System.out.println("GameOver");
-					hasAMine = true;
-					//				newColor = Color.GRAY;
-					//				System.out.println("Smething happened");
-				}
-				else {
-					hasAMine = false;
-				}
+			if ((clickedRow == row) && (clickedColumn == column)) {
+				newColor = Color.BLACK	;
+				System.out.println("GameOver");
+				hasAMine = true;
 			}
-			
-			//			else if ((clickedRow == row) && (clickedColumn == column)) {  // if the clicked square equals a mine position, end game
-
-			//			Need to make code to mark as empty
-			//			else if (clickedRow == row) || (clickedColumn == column)) {
-			//				newColor = Color.GRAY;
-			//				System.out.println("Lucky you.");
-			//			}
-
-
-
+			else {
+				hasAMine = false;
+			}
 		}
 	}
-	public void mineFlagger() {  //Defective
+	public void mineFlagger() {  
 		for (int i = 0; i <10; i++) {
 			row = i + 1;
 			for (int j = 0; j < 10; j++) {
 				column = j + 1;
-				
-				if ((clickedRow == row) && (clickedColumn == column) && (isFlagged == false)) {
-					hasFlags.add(row);
-					hasFlags.add(column);
-										newColor = Color.RED;
-//					isFlagged = true;
-//					break;
-				}
-				else if ((clickedRow == row) && (clickedColumn == column) && (isFlagged == true)){
-					hasFlags.remove(i);
-					hasFlags.remove(j);
-					newColor = Color.WHITE;
-//					isFlagged = false;
-//					break;
+				for (int f1 = 0; f1 < flagLocations.size(); f1++) {
+
+
+					if ((clickedRow == row) && (clickedColumn == column))  { 
+						flagLocations.add(clickedRow);
+						flagLocations.add(clickedColumn);
+						newColor = Color.RED;
+						usedFlags.remove(f1);
+						usedFlags.add(f1, true);
+						flagCounter++;
+
+						System.out.println(flagLocations);
+						System.out.println(usedFlags);
+						//						return;
+					}
+
+					else if ((clickedRow == row) && (clickedColumn == column)) {  // Read array list, then remove said element from list
+						flagLocations.remove(f1 - 1);
+						flagLocations.remove(f1 - 1);
+						usedFlags.remove(f1);
+						usedFlags.add(f1, false);
+						newColor = Color.WHITE;
+					}
 				}
 			}
-
+			System.out.println(flagLocations);
 		}
+
+
 		System.out.println(isFlagged);
+	}
+	public int flagUp() {
+		for (int i = 0; i < 10; i++){
+			if (usedFlags.get(i) == true) {
+				flagCounter++;
+			}
+		}
+		return flagCounter;
+	}
+	public int flagDown() {
+		for (int i = 0; i < 10; i++) {
+			if (usedFlags.get(i) == false) {
+				flagCounter--;
+			}
+		}
+		return flagCounter;
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -104,6 +123,7 @@ public class MyMouseAdapter extends MouseAdapter {
 		}
 		JFrame myFrame = (JFrame) c;
 		MyPanel myPanel = (MyPanel) myFrame.getContentPane().getComponent(0);
+
 		Insets myInsets = myFrame.getInsets();
 		int x1 = myInsets.left;
 		int y1 = myInsets.top;
@@ -167,30 +187,6 @@ public class MyMouseAdapter extends MouseAdapter {
 					} else {
 						//Released the mouse button on the same cell where it was pressed
 						if ((gridX == 0) || (gridY == 0)) {
-							//On the left column and on the top row... do nothing
-							//
-							//							Color newColor = null;
-							//							switch (generator.nextInt(5)) {
-							//							case 0:
-							//								newColor = Color.YELLOW;
-							//								break;
-							//							case 1:
-							//								newColor = Color.MAGENTA;
-							//								break;
-							//							case 2:
-							//								newColor = Color.BLACK;
-							//								break;
-							//							case 3:
-							//								newColor = new Color(0x964B00);   //Brown (from http://simple.wikipedia.org/wiki/List_of_colors)
-							//								break;
-							//							case 4:
-							//								newColor = new Color(0xB57EDC);   //Lavender (from http://simple.wikipedia.org/wiki/List_of_colors)
-							//								break;
-							//							}
-							//							myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = newColor;
-							//							myPanel.repaint();
-							//			
-							//							
 						} 
 						else {
 							//On the grid other than on the left column and on the top row:
@@ -198,27 +194,6 @@ public class MyMouseAdapter extends MouseAdapter {
 							clickedRow = myPanel.mouseDownGridX;
 							clickedColumn = myPanel.mouseDownGridY;
 							isAMine();
-
-							//							switch (generator.nextInt(5)) {
-							//							case 0:
-							//								newColor = Color.YELLOW;
-							//								break;
-							//							case 1:
-							//								newColor = Color.MAGENTA;
-							//								break;
-							//							case 2:
-							//								newColor = Color.BLACK;
-							//								break;
-							//							case 3:
-							//								newColor = new Color(0x964B00);   //Brown (from http://simple.wikipedia.org/wiki/List_of_colors)
-							//								break;
-							//							case 4:
-							//								newColor = new Color(0xB57EDC);   //Lavender (from http://simple.wikipedia.org/wiki/List_of_colors)
-							//								break;
-							/*
-							 * Switch new Color to new Color (r, g, b)
-							 */
-							//							}
 							myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = newColor;
 							myPanel.repaint();
 						}

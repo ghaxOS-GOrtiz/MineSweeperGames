@@ -12,7 +12,8 @@ import javax.swing.JFrame;
  
  		MyMouseAdapter myMouseAdapter = new MyMouseAdapter();
 		myFrame.addMouseListener(myMouseAdapter);
- 
+		myMouseAdapter.mineGenerator();
+		 
  		myFrame.setVisible(true);
  	}
  } 
